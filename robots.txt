@@ -1,4 +1,5 @@
 # Keep Roo's Phonk Pad out of search engines.
+# Crawling is allowed on purpose so crawlers can see the
+# <meta name="robots" content="noindex, nofollow"> tag in index.html.
 User-agent: *
-Disallow: /
-Noindex: /
+Allow: /

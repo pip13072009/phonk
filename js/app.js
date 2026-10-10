@@ -538,8 +538,52 @@
     renderTunes();
   }
 
-  function fileName(tune) {
-    return (tune.name.replace(/[^\w\s#'-]/g, '').replace(/[\s#']+/g, '-').replace(/^-+|-+$/g, '') || 'phonk-tune') + '.wav';
+  function baseName(tune) {
+    return tune.name.replace(/[^\w\s#'-]/g, '').replace(/[\s#']+/g, '-').replace(/^-+|-+$/g, '') || 'phonk-tune';
+  }
+
+  // Inside a claude.ai page, files have to go through its "downloads" helper,
+  // which takes .mp4/.webm audio but not .wav. Everywhere else we save the .wav directly.
+  let downloadsHelper = null;
+  function getDownloads() {
+    if (!downloadsHelper) {
+      downloadsHelper = window.claude && window.claude.use
+        ? window.claude.use('downloads').catch(() => null)
+        : Promise.resolve(null);
+    }
+    return downloadsHelper;
+  }
+
+  async function downloadTune(tune, btn) {
+    const dl = await getDownloads();
+    if (!dl) {
+      const a = document.createElement('a');
+      a.href = tune.url;
+      a.download = baseName(tune) + '.wav';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      return;
+    }
+    const label = btn.innerHTML;
+    btn.disabled = true;
+    try {
+      if (!tune.exported) {
+        tune.exported = await AudioIO.toCompressed(tune.blob, (p) => {
+          btn.innerHTML = `⏳ <span>Getting ready ${Math.round(p * 100)}%</span>`;
+        });
+      }
+      await dl.save({ filename: `${baseName(tune)}.${tune.exported.ext}`, data: tune.exported.blob });
+      toast('⬇️ Saved!');
+    } catch (err) {
+      if (!err || err.code !== 'declined') {
+        console.warn(err);
+        toast('Saving didn\'t work here. Try Record again on a computer.');
+      }
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = label;
+    }
   }
 
   function renderTunes() {
@@ -549,7 +593,7 @@
     const badge = $('#tuneBadge');
     badge.hidden = !S.unseenTunes;
     badge.textContent = S.unseenTunes;
-    const canShare = !!(navigator.canShare && window.File &&
+    const canShare = !window.claude && !!(navigator.canShare && window.File &&
       navigator.canShare({ files: [new File([''], 't.wav', { type: 'audio/wav' })] }));
 
     S.tunes.forEach((tune) => {
@@ -576,25 +620,28 @@
         AudioIO.TuneStore.put(tune).catch(() => {});
       });
       card.querySelector('audio').src = tune.url;
+      let deleteTimer = null;
       card.querySelector('.tune-actions').addEventListener('click', async (e) => {
         const btn = e.target.closest('button');
         if (!btn) return;
         if (btn.dataset.act === 'download') {
-          const a = document.createElement('a');
-          a.href = tune.url;
-          a.download = fileName(tune);
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
+          downloadTune(tune, btn);
         } else if (btn.dataset.act === 'share') {
           try {
             await navigator.share({
-              files: [new File([tune.blob], fileName(tune), { type: 'audio/wav' })],
+              files: [new File([tune.blob], baseName(tune) + '.wav', { type: 'audio/wav' })],
               title: tune.name,
             });
           } catch (err) { /* cancelled */ }
         } else if (btn.dataset.act === 'delete') {
-          if (!confirm(`Delete "${tune.name}"?`)) return;
+          // first tap asks, second tap deletes
+          if (!btn.classList.contains('sure')) {
+            btn.classList.add('sure');
+            btn.innerHTML = '🗑️ <span>Tap again to delete</span>';
+            deleteTimer = setTimeout(() => { btn.classList.remove('sure'); btn.innerHTML = '🗑️'; }, 3000);
+            return;
+          }
+          clearTimeout(deleteTimer);
           S.tunes = S.tunes.filter((t) => t !== tune);
           URL.revokeObjectURL(tune.url);
           AudioIO.TuneStore.remove(tune.id).catch(() => {});

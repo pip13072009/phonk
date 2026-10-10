@@ -13,7 +13,7 @@ No install and no sound files to download: every drum, cowbell and 808 is made b
 | 🧱 **Beat Maker** | Tap squares to build your own beat. Tap a 🎩 square twice to get a ⚡ hi-hat roll. 🎲 **Surprise!** makes a random beat. ⭐ **My Beat** on the Pads screen plays it along with the other loops. |
 | 🎛️ **Sound Twisters** | Six big sliders with faces that change as you slide: **Speed** 🐢→🚀, **Bass Boom**, **Crunch** 😇→😈, **Underwater** ☀️→🐙, **Echo**, **Volume**. **↺ Reset** puts them back to normal. |
 | 🔴 **Record** | Press Record, play, then press Stop. Your tune goes into **🎵 My Tunes**. |
-| 🎵 **My Tunes** | Listen, rename, **⬇️ Download** as `.wav`, **📤 Share** (on phones/tablets that support it) or 🗑️ delete. Tunes are kept on the device between visits. |
+| 🎵 **My Tunes** | Listen, rename, **⬇️ Download** as `.wav`, **📤 Share** (on phones/tablets that support it) or 🗑️ delete (tap twice). Tunes are kept on the device between visits. When the app runs inside a claude.ai page, Download saves `.mp4` (iPhone) or `.webm` (Android) audio instead, because that page can't save `.wav` files. |
 | 💾 **Save as song** | In Beat Maker, this turns your beat (played 4 times, with your Sound Twisters) into a clean `.wav` file. |
 
 Keyboard shortcuts on a computer: `1 2 3 4 / Q W E R / A S D F / Z X C V` are the pads, `B` is My Beat and `Space` stops everything.

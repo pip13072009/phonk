@@ -38,8 +38,8 @@ body {
   -webkit-user-select: none;
   user-select: none;
   overflow-x: hidden;
-  padding-bottom: env(safe-area-inset-bottom);
 }
+:root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
 button { font: inherit; color: inherit; cursor: pointer; touch-action: manipulation; }
 button:focus-visible, input:focus-visible { outline: 3px solid var(--cyan); outline-offset: 2px; }
 .neon { color: var(--pink); text-shadow: 0 0 12px rgba(255, 79, 216, .7); }
@@ -70,9 +70,9 @@ button:focus-visible, input:focus-visible { outline: 3px solid var(--cyan); outl
 
 /* ---------- header ---------- */
 .top {
-  position: sticky; top: 0; z-index: 10;
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
   display: flex; align-items: center; gap: 12px;
-  padding: 10px 16px; padding-top: max(10px, env(safe-area-inset-top));
+  padding: 10px 16px;
   background: rgba(18, 10, 31, .92);
   backdrop-filter: blur(10px);
   border-bottom: 2px solid var(--line);
@@ -208,6 +208,7 @@ body.bump-b .pad.playing { animation: bumpB .25s ease-out; }
 .tool-play.on { background: var(--red); color: #fff; }
 .tool-save { background: var(--cyan); color: #06242e; }
 .tool-danger { background: transparent; border: 2px solid var(--line); box-shadow: none; }
+.tool-danger.sure { background: var(--red); border-color: var(--red); color: #fff; }
 .tool-small { min-height: 42px; font-size: 15px; padding: 6px 12px; }
 
 /* ---------- beat maker ---------- */

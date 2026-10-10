@@ -165,5 +165,42 @@
     remove(id) { return this._tx('readwrite', (s) => s.delete(id)); },
   };
 
-  global.AudioIO = { encodeWav, audioBufferToWav, Recorder, TuneStore };
+  // Re-record a .wav as .mp4 (iPhone/Safari) or .webm (Chrome/Android) audio.
+  // MediaRecorder only works in real time, so this takes as long as the tune.
+  async function toCompressed(blob, onProgress) {
+    const R = global.MediaRecorder;
+    const type = R && ['audio/mp4', 'audio/webm;codecs=opus', 'audio/webm'].find((t) => R.isTypeSupported(t));
+    if (!type) throw new Error('This browser can\'t make .mp4 or .webm audio');
+    const ext = type.startsWith('audio/mp4') ? 'mp4' : 'webm';
+    const AC = global.AudioContext || global.webkitAudioContext;
+    const ctx = new AC();
+    try {
+      const buf = await ctx.decodeAudioData(await blob.arrayBuffer());
+      await ctx.resume();
+      if (ctx.state !== 'running') throw new Error('audio is paused');
+      const dest = ctx.createMediaStreamDestination();
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(dest);
+      const rec = new R(dest.stream, { mimeType: type, audioBitsPerSecond: 192000 });
+      const chunks = [];
+      rec.ondataavailable = (e) => { if (e.data.size) chunks.push(e.data); };
+      const stopped = new Promise((resolve) => { rec.onstop = resolve; });
+      rec.start(250);
+      const t0 = ctx.currentTime;
+      src.start();
+      const timer = setInterval(() => {
+        if (onProgress) onProgress(Math.min(1, (ctx.currentTime - t0) / buf.duration));
+      }, 200);
+      await new Promise((resolve) => { src.onended = resolve; });
+      clearInterval(timer);
+      rec.stop();
+      await stopped;
+      return { blob: new Blob(chunks, { type: type.split(';')[0] }), ext };
+    } finally {
+      ctx.close();
+    }
+  }
+
+  global.AudioIO = { encodeWav, audioBufferToWav, Recorder, TuneStore, toCompressed };
 })(window);

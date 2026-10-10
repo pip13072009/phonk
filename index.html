@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Roo's Phonk Pad</title>
+  <meta name="description" content="Make your own phonk tunes with loops, cowbells and 808s — then save them as a sound file.">
+  <meta name="theme-color" content="#120a1f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Phonk Pad">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Browsers only allow sound after a tap, so we start with a big friendly button -->
+  <div id="startScreen" class="start-screen">
+    <div class="start-card">
+      <div class="start-logo" aria-hidden="true">🏎️💨</div>
+      <h1>Roo's <span class="neon">Phonk</span> Pad</h1>
+      <p>Tap pads. Twist sounds. Record your tune!</p>
+      <button id="startBtn" class="start-btn">🎵 Let's go!</button>
+      <p class="start-note">🔊 Turn your volume up (and the silent switch off)</p>
+    </div>
+  </div>
+
+  <header class="top">
+    <div class="brand">
+      <span class="brand-logo" aria-hidden="true">🏎️</span>
+      <span class="brand-name">Roo's <span class="neon">Phonk</span> Pad</span>
+    </div>
+    <div class="beat-dots" id="beatDots" aria-hidden="true">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    <button id="recBtn" class="rec-btn" aria-label="Record">
+      <span class="rec-dot" aria-hidden="true"></span><span id="recLabel">Record</span>
+    </button>
+  </header>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" class="tab" data-tab="pads" aria-selected="true">🎹 <span>Pads</span></button>
+    <button role="tab" class="tab" data-tab="beat" aria-selected="false">🧱 <span>Beat Maker</span></button>
+    <button role="tab" class="tab" data-tab="tunes" aria-selected="false">🎵 <span>My Tunes</span><b id="tuneBadge" class="badge" hidden>0</b></button>
+  </nav>
+
+  <main>
+    <!-- LAUNCH PAD -->
+    <section id="tab-pads" class="panel">
+      <div id="padTip" class="tip">
+        <span>👆 Tap a pad to start it. Tap again to stop. Pads <b>wait for the beat</b> so it always sounds cool!</span>
+        <button class="tip-x" aria-label="Hide tip">✕</button>
+      </div>
+      <div id="padGrid" class="pad-grid"></div>
+      <div class="pad-extra">
+        <button id="myBeatPad" class="pad pad-wide" data-group="beat" style="--c: var(--green)">
+          <span class="pad-emoji">⭐</span><span class="pad-name">My Beat</span>
+        </button>
+        <button id="stopAll" class="stop-all">⏹️ <span>Stop all</span></button>
+      </div>
+    </section>
+
+    <!-- BEAT MAKER -->
+    <section id="tab-beat" class="panel" hidden>
+      <div class="beat-toolbar">
+        <button id="beatPlay" class="tool tool-play">▶️ <span>Play</span></button>
+        <button id="beatRandom" class="tool">🎲 <span>Surprise!</span></button>
+        <button id="beatClear" class="tool">🧽 <span>Clear</span></button>
+        <button id="beatExport" class="tool tool-save">💾 <span>Save as song</span></button>
+      </div>
+      <p class="hint">Tap squares to add sounds. Tap a 🎩 square twice for a ⚡ hi-hat roll. Tap a name to hear it.</p>
+      <div class="beat-scroll">
+        <div id="beatGrid" class="beat-grid"></div>
+      </div>
+    </section>
+
+    <!-- MY TUNES -->
+    <section id="tab-tunes" class="panel" hidden>
+      <h2 class="section-title">🎵 My Tunes</h2>
+      <div id="tuneList" class="tune-list"></div>
+      <div id="tuneEmpty" class="empty">
+        <div class="empty-emoji">🎤</div>
+        <p>No tunes yet!</p>
+        <p class="empty-steps">1. Press <b>🔴 Record</b><br>2. Play some pads<br>3. Press <b>⏹ Stop</b></p>
+        <p class="empty-steps">Or make a beat in <b>🧱 Beat Maker</b> and press <b>💾 Save as song</b>.</p>
+      </div>
+    </section>
+
+    <!-- SOUND TWISTERS (shown under Pads and Beat Maker) -->
+    <section id="twisters" class="twisters">
+      <div class="twisters-head">
+        <h2 class="section-title">🎛️ Sound Twisters</h2>
+        <button id="twReset" class="tool tool-small">↺ <span>Reset</span></button>
+      </div>
+      <div id="twisterGrid" class="twister-grid"></div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/engine.js"></script>
+  <script src="js/patterns.js"></script>
+  <script src="js/audio-io.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

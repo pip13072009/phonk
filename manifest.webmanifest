@@ -1,0 +1,16 @@
+{
+  "name": "Roo's Phonk Pad",
+  "short_name": "Phonk Pad",
+  "description": "Make your own phonk tunes with loops, cowbells and 808s.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#120a1f",
+  "theme_color": "#120a1f",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}

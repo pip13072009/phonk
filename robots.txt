@@ -1,0 +1,3 @@
+# Keep Roo's Phonk Pad out of search engines.
+User-agent: *
+Disallow: /
